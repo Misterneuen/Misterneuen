@@ -1,0 +1,64 @@
+import random
+
+userCounter = 0
+opponentCounter = 0
+
+anotherGame = 1
+while (anotherGame != 0)
+    print ("Rock, Paper, Scissors")
+    
+    validAnswer = 0 
+    while validAnswer != 1:
+    
+        choices = ['R','P','S']
+        userChoice = str.upper(input("choose your weapon [R]ock, [P]aper, [S]cissor"))
+    
+    
+        if userChoice in choices:
+            validAnswer = 1
+        else:
+            validAnswer = 0
+            print("Chose a valid weapon, please")
+            userChoice = str.upper(input("choose your weapon [R]ock, [P]aper, [S]cissor"))
+    
+    print("you chose:" + userChoice)
+    choices = ['R','P','S']
+    opponentChoice = str(random.choice(choices))
+    print("I chose:" + opponentChoice)
+    
+    checkDraw = (userChoice == opponentChoice)
+    
+    if checkDraw:
+        print ("Draw!")
+        
+    elif (userChoice == 'R' and opponentChoice == 'S') or (userChoice == 'S' and opponentChoice == 'P') or (userChoice == 'P' and opponentChoice == 'R'):
+        print("You WIN!")
+        userCounter = userCounter + 1
+        opponentCounter = opponentCounter
+
+    else:
+        print("you LOSE!")
+        userCounter = userCounter 
+        opponentCounter = opponentCounter+ 1
+
+    print("Total Score: " + str(userCounter) +" : "+str(opponentCounter))
+    if userCounter == opponentCounter:
+        print("You are a worthy opponent!")
+    elif userCounter > opponentCounter:
+        print("Obi-Wan taught you well")
+    else:
+        print("It is over, Anakin, I have the high ground")
+        
+    if (userCounter == 10 or opponentCounter == 10):
+        print("Dont get high on your own supply! Enough for today!")
+        anotherGame = 0
+    else:
+        properAnswer = 0
+            
+        inputAnotherGame = (str(input("Wanna play another game? - [Y]es or [N]o?"))=='Y')
+            
+        if inputAnotherGame:
+            anotherGame = anotherGame
+        else:
+            anotherGame = 0
+    
