@@ -1,0 +1,109 @@
+from urllib.request import urlopen
+import random
+
+def getContentasString(file):
+    file = urlopen(source)
+    content = ""
+    for line in file:
+        decoded_line = line.decode("utf-8")
+        #print(decoded_line)
+        content = content + decoded_line
+    return content
+    
+# Open Sun Tzu
+source = "http://classics.mit.edu/Tzu/artwar.1b.txt"
+bookcontent = getContentasString(source)
+
+def cutString(content, firstString, lastString):
+    indexfirst = content.find(firstString)
+    indexlast = bookcontent.find(lastString)
+    stringcut = content[indexfirst:indexlast]
+    return stringcut
+
+content = bookcontent
+firstString = "I. Laying Plans"
+lastString ="THE END"
+
+bookextract = cutString(content, firstString, lastString)
+
+romanNumerals = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII"]
+
+def removeNewlines(string):
+    plaintext = string.replace('\n',' ')
+    return plaintext
+    
+def sliceChapter(string):
+    i = 1
+    breakpoint = "no"
+    chapterafter = ""
+    while i <= 50 and breakpoint == "no":
+        reference = str(i)+"."
+        referencealternative = str(i)+","+str(i+1)+"."
+        referencenext = str(i+1)+"."
+        referencenextalternative = str(i+1)+","+str(i+2)+"."
+        referenceafternext = str(i+2)+"."
+        indexreference = string.find(reference)
+        indexreferencealternative = string.find(referencealternative)
+        if string.find(referencenext) > -1:
+            indexreferencenext = string.find(referencenext)
+        else:
+            indexreferencenext = len(string)
+            breakpoint = "yes"
+        indexreferenceafternext = string.find(referenceafternext)
+        indexreferencenextalternative = string.find(referencenextalternative)
+        #this gives a textpassage per reference
+        textbefore = string[(indexreference+len(reference)):indexreferencenext]+" ("+reference+")"
+        #check whether the text makes sense
+        ## if alternative reference in text, cut the text
+        if textbefore.find(referencenextalternative) > -1:
+            textbefore = textbefore[:textbefore.find(referencenextalternative)]
+        if textbefore == "":
+            textafter = textbefore
+        else:
+            textafter = textbefore + '\n'
+        if textafter.find("Sun Tzu said:") > -1:
+            textafer = textafter[len("Sun Tzu said:"):]
+        else:
+            textafter = textafter
+        chapterafter = chapterafter + textafter
+        i = i + 1
+        if breakpoint == "yes":
+            break
+    return chapterafter
+
+def createContenttable(Headers,String):
+    contenttable = [['Title','Chapter']]
+    i = 0
+    j = len(Headers)-1
+    while i <= j:
+        sectionheader = Headers[i]+"."
+        indexf = String.find(sectionheader)
+        indexfl = String[indexf:].find('\n\n')
+        if i < j:
+            sectionheadernext = Headers[i+1]+"."
+            indexn = String.find(sectionheadernext)
+        else:
+            sectionheadernext = ""
+            indexn = len(String)
+        contentindex = sectionheader
+        contentheader = String[indexf+len(sectionheader):(indexf+indexfl)]
+        contentchapter = String[(indexf+indexfl):indexn]
+        contentinsert = [contentindex, contentheader,contentchapter]      
+        #print(i, sectionheader, sectionheadernext, indexf, indexfl, indexn, contentheader)
+        contenttable.append(contentinsert)
+        #print(contentinsert)
+        i = i+1
+    return contenttable
+
+bookcontent = createContenttable(romanNumerals,bookextract)
+chapters = bookcontent[1:]
+randomchapter = random.choice(chapters)
+randomheader = randomchapter[1]
+randomcontent = randomchapter[2]
+randomcontentformatted = removeNewlines(randomcontent)
+randomcontentsliced = sliceChapter(randomcontentformatted)
+#select random line from random content sliced
+lines = randomcontentsliced.splitlines()
+randomline = random.choice(lines)
+
+print("On "+randomheader+ " the great Sun Tzu once said:" + randomline)
